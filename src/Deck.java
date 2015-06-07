@@ -149,6 +149,8 @@ public class Deck {
      */
     private Card drawHead(){return mDeckList.get(0);}
 
+
+
     public ArrayList<Card> shuffleDeck(){
         for (int i = 0 ; i < 52; i++){
             drawRandomCard();
@@ -182,5 +184,19 @@ public class Deck {
         }
         return false;
     }
+    /***
+     * This method will assign a card to each player until the deck passed in
+     * is empty.
+     * @return - the new list of players with a new hand.
+     */
+    public ArrayList<Player> distributeDeck(ArrayList<Card> c, ArrayList<Player> p){
+        int i = 0;
+        for(Card tempC : c){
+            i = (i == p.size()) ? 0: i + 1;
+            p.get(i).add(tempC);
+        }
+        return p;
+    }
+
 
 }
