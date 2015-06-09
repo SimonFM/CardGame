@@ -17,6 +17,11 @@ public class Hand {
         mPlaced = new ArrayList<Card>();
     }
 
+    /***
+     * returns the size of the player's hand.
+     * @return - the size of the player's hand
+     */
+    public int getSize(){ return mCards.size();}
     /**
      * Yup, this function adds a card to the player's hand.
      * @param c - the card you want to add.
@@ -58,6 +63,9 @@ public class Hand {
         return c;
     }
 
+    /***
+     * Prints out the player's hand
+     */
     public void printHand(){
         System.out.println("Your hand: ");
         System.out.println("------------------------------------");
@@ -65,19 +73,28 @@ public class Hand {
         System.out.println("------------------------------------");
     }
 
+    /***
+     * Checks whether there is 3 of a kind in a player's hand.
+     * @return returns the arraylist of those 3 or more cards
+     */
     public ArrayList<Card> checkHand(){
         ArrayList<Card> result;
         for(Card c : mCards){
             result = checkList(c);
 
             if(result == null) return null;
-            else if(result.size() == 3) return result;
+            else if(result.size() >= 3) return result;
             else return null;
         }
         return null;
     }
 
-    public ArrayList<Card> checkList(Card c){
+    /***
+     * Checks each card in the arraylist against the card to be checked.
+     * @param c - the card to check against
+     * @return - the arraylist of the cards to be returned.
+     */
+    private ArrayList<Card> checkList(Card c){
         int count = 0;
         ArrayList<Card> result = new ArrayList<Card>();
         String name = c.getName();
@@ -87,7 +104,7 @@ public class Hand {
                 result.add(temp);
             }
         }
-        if(count == 3) {
+        if(count >= 4) {
             removeFromHand(c);
             return result;
         }
@@ -97,7 +114,10 @@ public class Hand {
         }
     }
 
-
+    /***
+     * Removes a card from the player's hand
+     * @param toRemove - the card to remove.
+     */
     public void removeFromHand(Card toRemove){
         int i = 0;
         String name = toRemove.getName();

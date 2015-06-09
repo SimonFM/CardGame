@@ -45,6 +45,8 @@ public class Player {
         myHand.printHand();
     }
 
+    public Hand getHand(){return myHand;}
+
     /***
      *
      * @return -  the head of the player's Hand.
@@ -70,10 +72,15 @@ public class Player {
     }
 
     /***
-     *
+     * This method filters the choice made by the user and returns that
+     * card, but also deletes that card from their hand
+     * @param choice - name of card to delete.
+     * @return the card that was deleted.
      */
     public Card placeDownCard(String choice){
+        System.out.println(choice);
         String[] parts = choice.split(" ");
+        System.out.println(parts.length);
         System.out.println("DURRR "+ parts[0] + " of " +parts[2]);
         Card result = new Card(parts[0],0,parts[2]);
 

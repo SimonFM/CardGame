@@ -4,22 +4,19 @@ import java.util.*;
  * This class is a representation of the 'Three of a Kind' card game.
  * Created by Jinxy on 01/06/2015.
  */
-public class ThreeOfAKind {
-
-    private ArrayList<Player> thePlayers;
+public class ThreeOfAKind{
     private ArrayList<Card> theDeck;
-    private ArrayList<Card> thePile;
-    private ArrayList<Player> winnerQueue;
+    private Stack<Card> thePile;
+    private ArrayList<Player> winnerQueue,thePlayers;
     private int DECK_POINTER;
 
     ThreeOfAKind(){
         theDeck = new Deck().shuffleDeck();
-        thePile = new ArrayList<Card>();
+        thePile = new Stack<Card>();
         thePlayers = new ArrayList<Player>();
+        winnerQueue = new ArrayList<Player>();
         setThePlayersNames();
         thePlayers = distributeDeck(theDeck,thePlayers);
-        winnerQueue = new ArrayList<Player>();
-        game();
         DECK_POINTER = 0;
     }
 
@@ -29,8 +26,7 @@ public class ThreeOfAKind {
      */
     private int setThePlayers(){
         Scanner s = new Scanner(System.in);
-        int size = 0, i = 0;
-        String name = "";
+        int size = 0;
         do{
             System.out.print("How many players are playing?: ");
             size = s.nextInt();
@@ -54,7 +50,6 @@ public class ThreeOfAKind {
         int i = 0, size = setThePlayers();
         String temp = "";
         do{
-
             System.out.print("Please enter player " + i + "'s name: ");
             temp = s.nextLine();
 
@@ -66,12 +61,13 @@ public class ThreeOfAKind {
             }
         }while(size != i);
     }
+
     /***
      * This method will assign a card to each player until the deck passed in
      * is empty.
      * @return - the new list of players with a new hand.
      */
-    public ArrayList<Player> distributeDeck(ArrayList<Card> c, ArrayList<Player> p){
+    private ArrayList<Player> distributeDeck(ArrayList<Card> c, ArrayList<Player> p){
         int i = 0, k = 0,j = 0;
         int numberOfDraws = p.size()*5, pSize = p.size();
 
@@ -86,7 +82,7 @@ public class ThreeOfAKind {
             else k = -1;
         }
         if(k == -1) DECK_POINTER = -1;
-        else DECK_POINTER = k+1;
+        else DECK_POINTER = k + 1;
         return p;
     }
 
@@ -96,7 +92,7 @@ public class ThreeOfAKind {
      * @param index
      * @return
      */
-    public Card drawAt(ArrayList<Card> c, int index){return c.get(index);}
+    private Card drawAt(ArrayList<Card> c, int index){return c.get(index);}
 
     /***
      * This is the main method that will do the bulk of my work
@@ -110,7 +106,7 @@ public class ThreeOfAKind {
         int choice = 0;
         int sizeP = thePlayers.size();
         Player currentPlayer = thePlayers.get(i);
-        Card drawn, toBePlaced;
+        Card drawn, toBePlaced, topOfPile;
         do{
             currentPlayer = thePlayers.get(i);
             currentPlayerName = currentPlayer.getmName();
@@ -120,11 +116,16 @@ public class ThreeOfAKind {
             if(round != 1){
                 drawn = drawAt(theDeck,DECK_POINTER);
                 DECK_POINTER++;
-                System.out.println("You drew a: " + drawn.getName()
-                                    + " of " + drawn.getSuit());
+                System.out.println("You drew a: " + drawn.getName()+ " of " + drawn.getSuit());
                 currentPlayer.add(drawn);
             }
-
+            if(thePile.size() == 0){
+                System.out.println("There is nothing in the pile");
+            }
+            else{
+                topOfPile = thePile.peek();
+                System.out.println("Top of the Pile: " + topOfPile.getName()+ " of " + topOfPile.getSuit());
+            }
             do {
                 System.out.println("------------------------------------");
                 System.out.println(currentPlayerName + ", please choose an option");
@@ -145,8 +146,8 @@ public class ThreeOfAKind {
                         currentPlayer.lookAtHand();
                         break;
                     case 3:
-                        currentPlayer.lookAtHand();
                         System.out.println("Choose a card to put down.");
+                        currentPlayer.lookAtHand();
                         placed = s.nextLine();
                         toBePlaced = currentPlayer.placeDownCard(placed);
 
@@ -154,7 +155,7 @@ public class ThreeOfAKind {
                             choice = 1;
                             System.out.println("Sorry that card doesn't exist");
                         }
-                        else thePile.add(toBePlaced);
+                        else thePile.push(toBePlaced);
                         break;
                     default:
                         System.out.println("*************************************");
@@ -164,11 +165,16 @@ public class ThreeOfAKind {
                 }
             }while(choice == 1 || (choice > 3 && choice < 0 ));
 
-            i++;
+            if(currentPlayer.getHand().getSize() == 0){
+                System.out.println(currentPlayer.getmName() + " is out! They removed all their cards!");
+                winnerQueue.add(currentPlayer);
+                thePlayers.remove(i);
+            }
             if(sizeP <= i){
                 i = 0;
                 round++;
             }
+            else i++;
 
         }while(winnerQueue.size() != sizeP-1);
         System.out.println(winnerQueue.get(winnerQueue.size()-1).getmName() +" is the Winner! :D");
@@ -176,5 +182,6 @@ public class ThreeOfAKind {
 
     public static void main(String[] args){
         ThreeOfAKind test = new ThreeOfAKind();
+        test.game();
     }
 }
